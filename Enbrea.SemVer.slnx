@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+  </Folder>
+  <Project Path="src/Enbrea.SemVer.csproj" />
+  <Project Path="test/Xunit/Enbrea.SemVer.XUnit.csproj" />
+</Solution>
