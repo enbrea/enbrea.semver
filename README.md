@@ -3,16 +3,17 @@
 
 # Enbrea.SemVer
 
-A lightweight .NET implementation of Semantic Versioning ([SemVer](https://semver.org)) for parsing, comparing, and formatting version numbers.
+A lightweight .NET implementation of [Semantic Versioning 2.0.0](https://semver.org) for parsing, validating, comparing, and formatting semantic version numbers.
 
-+ Supports `.NET 10`, `.NET 9` and `.NET 8`
-+ Parse version strings into strongly typed objects
++ Supports `.NET 10`, `.NET 9`, and `.NET 8`
++ Strict SemVer 2.0.0 parsing and validation
++ Parse strings and character spans into strongly typed version objects
 + Compare versions using standard comparison operators
-+ Full SemVer pre-release precedence support (alpha, alpha.1, beta.2, rc.1, etc.)
-+ Support for build metadata (+build.123)
-+ Convert versions to and from string representations
-+ Implements `IComparable<T>` and `IEquatable<T>`
-+ Zero dependencies
++ Full SemVer prerelease precedence support, including `alpha`, `alpha.1`, `beta.2`, and `rc.1`
++ Support for build metadata such as `+build.123`
++ Correct comparison of arbitrarily large numeric prerelease identifiers
++ Implements `IComparable<T>`, `IEquatable<T>`, `IParsable<T>`, and `ISpanParsable<T>`
++ Zero external dependencies
 
 ## Installation
 
