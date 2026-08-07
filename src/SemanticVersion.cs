@@ -87,6 +87,26 @@ public sealed class SemanticVersion : IEquatable<SemanticVersion>, IComparable<S
     public string PreRelease { get; }
 
     /// <summary>
+    /// Determines whether the specified string is a valid semantic version.
+    /// </summary>
+    /// <param name="value">String formatted version</param>
+    /// <returns>True if the specified string is a valid semantic version; otherwise, false.</returns>
+    public static bool IsValid(string value)
+    {
+        return TryParse(value, provider: null, out _);
+    }
+
+    /// <summary>
+    /// Determines whether the specified span of characters is a valid semantic version.
+    /// </summary>
+    /// <param name="value">String formatted version</param>
+    /// <returns>True if the specified span of characters is a valid semantic version; otherwise, false.</returns>
+    public static bool IsValid(ReadOnlySpan<char> value)
+    {
+        return TryParse(value, provider: null, out _);
+    }
+
+    /// <summary>
     /// Determines whether two versions are not equal.
     /// </summary>
     /// <param name="left">The first version to compare</param>
@@ -202,7 +222,6 @@ public sealed class SemanticVersion : IEquatable<SemanticVersion>, IComparable<S
 
         throw new FormatException($"'{value}' is not a valid semantic version.");
     }
-
     /// <summary>
     /// Tries to parse a version string into a <see cref="SemanticVersion"/> instance.
     /// </summary>
