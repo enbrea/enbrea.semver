@@ -20,15 +20,16 @@ namespace Enbrea.SemVer.XUnit;
 public sealed class SemanticVersionTest
 {
     [Fact]
-    public void Build_Metadata_Does_Not_Affect_Precedence_Or_Equality()
+    public void Build_Metadata_Does_Not_Affect_Precedence_But_Affects_Equality()
     {
         var first = SemanticVersion.Parse("1.0.0+build.1");
         var second = SemanticVersion.Parse("1.0.0+build.2");
 
         Assert.Equal(0, first.CompareTo(second));
-        Assert.Equal(first, second);
-        Assert.True(first == second);
-        Assert.Equal(first.GetHashCode(), second.GetHashCode());
+        Assert.True(first.HasSamePrecedence(second));
+        Assert.NotEqual(first, second);
+        Assert.True(first != second);
+        Assert.False(first == second);
     }
 
     [Fact]
@@ -115,7 +116,7 @@ public sealed class SemanticVersionTest
         SemanticVersion nullVersion = null;
         var version = new SemanticVersion(1, 0, 0);
 
-        Assert.True(nullVersion == null);
+        Assert.Null(nullVersion);
         Assert.True(nullVersion != version);
         Assert.True(nullVersion < version);
         Assert.True(version > nullVersion);
@@ -163,6 +164,20 @@ public sealed class SemanticVersionTest
         var version = SemanticVersion.Parse("1.2.3");
 
         Assert.True(version.CompareTo(null) > 0);
+    }
+
+    [Fact]
+    public void Comparison_Operators_Use_Precedence_Not_Build_Metadata()
+    {
+        var first = SemanticVersion.Parse("1.0.0+build.1");
+        var second = SemanticVersion.Parse("1.0.0+build.2");
+
+        Assert.True(first <= second);
+        Assert.True(first >= second);
+        Assert.True(second <= first);
+        Assert.True(second >= first);
+
+        Assert.False(first == second);
     }
 
     [Fact]
@@ -244,6 +259,25 @@ public sealed class SemanticVersionTest
         Assert.False(version.Equals(null));
     }
 
+    [Fact]
+    public void HasSamePrecedence_Returns_False_For_Different_Precedence_Or_Null()
+    {
+        var first = SemanticVersion.Parse("1.0.0-alpha");
+        var second = SemanticVersion.Parse("1.0.0");
+
+        Assert.False(first.HasSamePrecedence(second));
+        Assert.False(first.HasSamePrecedence(null));
+    }
+
+    [Fact]
+    public void IsValid_String_And_Span_Return_Expected_Values()
+    {
+        Assert.True(SemanticVersion.IsValid("1.2.3-alpha.1+build.123"));
+        Assert.False(SemanticVersion.IsValid("1.2"));
+
+        Assert.True(SemanticVersion.IsValid("2.0.0".AsSpan()));
+        Assert.False(SemanticVersion.IsValid("01.0.0".AsSpan()));
+    }
     [Theory]
     [InlineData("0.0.0")]
     [InlineData("1.2.3")]
@@ -261,7 +295,6 @@ public sealed class SemanticVersionTest
 
         Assert.Equal(value, version.ToString());
     }
-
     [Fact]
     public void Parse_Ignores_Format_Provider()
     {
@@ -336,6 +369,7 @@ public sealed class SemanticVersionTest
         Assert.True(version.IsPrerelease);
         Assert.False(version.HasBuildMetadata);
     }
+
     [Fact]
     public void Parse_Parses_PreRelease_And_Build_Metadata()
     {
@@ -390,6 +424,19 @@ public sealed class SemanticVersionTest
     {
         Assert.Throws<FormatException>(
             () => SemanticVersion.Parse(value));
+    }
+
+    [Fact]
+    public void Parse_Span_And_Parse_Span_With_Provider_Work()
+    {
+        ReadOnlySpan<char> value = "1.2.3-beta.1+build.5".AsSpan();
+        var provider = new CustomFormatProvider();
+
+        var versionFromSpan = SemanticVersion.Parse(value);
+        var versionFromSpanWithProvider = SemanticVersion.Parse(value, provider);
+
+        Assert.Equal("1.2.3-beta.1+build.5", versionFromSpan.ToString());
+        Assert.Equal("1.2.3-beta.1+build.5", versionFromSpanWithProvider.ToString());
     }
 
     [Fact]
@@ -466,6 +513,98 @@ public sealed class SemanticVersionTest
         Assert.True(successful);
         Assert.NotNull(version);
         Assert.Equal(value, version.ToString());
+    }
+
+    [Fact]
+    public void TryParse_With_Provider_Overloads_Work()
+    {
+        var provider = new CustomFormatProvider();
+
+        var stringSuccess = SemanticVersion.TryParse("1.2.3-alpha", provider, out var fromString);
+        var spanSuccess = SemanticVersion.TryParse("1.2.3+build.7".AsSpan(), provider, out var fromSpan);
+
+        Assert.True(stringSuccess);
+        Assert.NotNull(fromString);
+        Assert.Equal("1.2.3-alpha", fromString.ToString());
+
+        Assert.True(spanSuccess);
+        Assert.NotNull(fromSpan);
+        Assert.Equal("1.2.3+build.7", fromSpan.ToString());
+    }
+
+    [Fact]
+    public void WithBuildMetadata_Returns_Same_Instance_When_Unchanged()
+    {
+        var version = SemanticVersion.Parse("1.2.3+build.7");
+
+        var updated = version.WithBuildMetadata("build.7");
+
+        Assert.Same(version, updated);
+    }
+
+    [Fact]
+    public void WithBuildMetadata_Updates_And_Preserves_Other_Components()
+    {
+        var version = SemanticVersion.Parse("1.2.3-alpha.1");
+
+        var updated = version.WithBuildMetadata("build.7");
+
+        Assert.NotSame(version, updated);
+        Assert.Equal("1.2.3-alpha.1+build.7", updated.ToString());
+    }
+
+    [Fact]
+    public void WithMajor_WithMinor_And_WithPatch_Update_Expected_Component()
+    {
+        var version = SemanticVersion.Parse("1.2.3-alpha+build.9");
+
+        var updatedMajor = version.WithMajor(4);
+        var updatedMinor = version.WithMinor(5);
+        var updatedPatch = version.WithPatch(6);
+
+        Assert.Equal("4.2.3-alpha+build.9", updatedMajor.ToString());
+        Assert.Equal("1.5.3-alpha+build.9", updatedMinor.ToString());
+        Assert.Equal("1.2.6-alpha+build.9", updatedPatch.ToString());
+    }
+
+    [Fact]
+    public void WithMethods_Reject_Invalid_Values()
+    {
+        var version = SemanticVersion.Parse("1.2.3");
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => version.WithMajor(-1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => version.WithMinor(-1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => version.WithPatch(-1));
+        Assert.Throws<ArgumentException>(() => version.WithPreRelease("01"));
+        Assert.Throws<ArgumentException>(() => version.WithBuildMetadata("build_1"));
+    }
+
+    [Fact]
+    public void WithMethods_Return_Same_Instance_When_Value_Is_Unchanged()
+    {
+        var version = SemanticVersion.Parse("1.2.3-alpha+build.9");
+        var withoutPreRelease = version.WithoutPreRelease();
+        var withoutBuildMetadata = version.WithoutBuildMetadata();
+
+        Assert.Same(version, version.WithMajor(1));
+        Assert.Same(version, version.WithMinor(2));
+        Assert.Same(version, version.WithPatch(3));
+        Assert.Same(version, version.WithPreRelease("alpha"));
+        Assert.Same(version, version.WithBuildMetadata("build.9"));
+        Assert.Same(withoutPreRelease, withoutPreRelease.WithoutPreRelease());
+        Assert.Same(withoutBuildMetadata, withoutBuildMetadata.WithoutBuildMetadata());
+    }
+
+    [Fact]
+    public void WithPreRelease_Updates_And_WithoutPreRelease_Removes_It()
+    {
+        var version = SemanticVersion.Parse("1.2.3+build.7");
+
+        var withPreRelease = version.WithPreRelease("beta.1");
+        var withoutPreRelease = withPreRelease.WithoutPreRelease();
+
+        Assert.Equal("1.2.3-beta.1+build.7", withPreRelease.ToString());
+        Assert.Equal("1.2.3+build.7", withoutPreRelease.ToString());
     }
     
     private static T ParseGeneric<T>(string value)

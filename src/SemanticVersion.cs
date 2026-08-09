@@ -16,7 +16,7 @@ using System.Globalization;
 namespace Enbrea.SemVer;
 
 /// <summary>
-/// Semantic version type, following closely https://semver.org
+/// Represents a semantic version according to <see href="https://semver.org">Semantic Versioning 2.0.0</see>.
 /// </summary>
 public sealed class SemanticVersion : IEquatable<SemanticVersion>, IComparable<SemanticVersion>, ISpanParsable<SemanticVersion>
 {
@@ -87,10 +87,13 @@ public sealed class SemanticVersion : IEquatable<SemanticVersion>, IComparable<S
     public string PreRelease { get; }
 
     /// <summary>
-    /// Determines whether the specified string is a valid semantic version.
+    /// Determines whether the specified string represents a valid semantic version.
     /// </summary>
-    /// <param name="value">String formatted version</param>
-    /// <returns>True if the specified string is a valid semantic version; otherwise, false.</returns>
+    /// <param name="value">The string to validate.</param>
+    /// <returns>
+    /// <c>true</c> if <paramref name="value"/> represents a valid semantic version; otherwise, 
+    /// <c>false</c>.
+    /// </returns>
     public static bool IsValid(string value)
     {
         return TryParse(value, provider: null, out _);
@@ -99,30 +102,39 @@ public sealed class SemanticVersion : IEquatable<SemanticVersion>, IComparable<S
     /// <summary>
     /// Determines whether the specified span of characters is a valid semantic version.
     /// </summary>
-    /// <param name="value">String formatted version</param>
-    /// <returns>True if the specified span of characters is a valid semantic version; otherwise, false.</returns>
+    /// <param name="value">The span of characters to validate.</param>
+    /// <returns>
+    /// <c>true</c> if <paramref name="value"/> represents a valid semantic version; otherwise, 
+    /// <c>false</c>.
+    /// </returns>
     public static bool IsValid(ReadOnlySpan<char> value)
     {
         return TryParse(value, provider: null, out _);
     }
 
     /// <summary>
-    /// Determines whether two versions are not equal.
+    /// Determines whether two semantic versions are not equal.
     /// </summary>
-    /// <param name="left">The first version to compare</param>
-    /// <param name="right">The second version to compare</param>
-    /// <returns>True, if left not equal to right; otherwise, false.</returns>
+    /// <param name="left">The first semantic version to compare.</param>
+    /// <param name="right">The second semantic version to compare.</param>
+    /// <returns>
+    /// <c>true</c> if <paramref name="left"/> and <paramref name="right"/> are not equal; 
+    /// otherwise, <c>false</c>.
+    /// </returns>
     public static bool operator !=(SemanticVersion left, SemanticVersion right)
     {
         return !(left == right);
     }
 
     /// <summary>
-    /// Compare two versions using less than
+    /// Compares two semantic versions using less than.
     /// </summary>
-    /// <param name="left">The first version to compare</param>
-    /// <param name="right">The second version to compare</param>
-    /// <returns>true, if left is the less than right; otherwise, false.</returns>
+    /// <param name="left">The first semantic version to compare.</param>
+    /// <param name="right">The second semantic version to compare.</param>
+    /// <returns>
+    /// <c>true</c> if <paramref name="left"/> is less than <paramref name="right"/>; 
+    /// otherwise, <c>false</c>.
+    /// </returns>
     public static bool operator <(SemanticVersion left, SemanticVersion right)
     {
         if (left is null) return right != null;
@@ -131,19 +143,25 @@ public sealed class SemanticVersion : IEquatable<SemanticVersion>, IComparable<S
     }
 
     /// <summary>
-    /// Compare two versions using less or equal than
+    /// Compares two semantic versions using less than or equal to.
     /// </summary>
-    /// <param name="left">The first version to compare</param>
-    /// <param name="right">The second version to compare</param>
-    /// <returns>True, if left is the less or equal than right; otherwise, false.</returns>
-    public static bool operator <=(SemanticVersion left, SemanticVersion right) => left == right || left < right;
+    /// <param name="left">The first semantic version to compare.</param>
+    /// <param name="right">The second semantic version to compare.</param>
+    /// <returns>
+    /// <c>true</c> if <paramref name="left"/> is less than or equal to <paramref name="right"/>;
+    /// otherwise, <c>false</c>.
+    /// </returns>
+    public static bool operator <=(SemanticVersion left, SemanticVersion right) => !(left > right);
 
     /// <summary>
-    /// Determines whether two versions are equal.
+    /// Determines whether two semantic versions are equal.
     /// </summary>
-    /// <param name="left">The first version to compare</param>
-    /// <param name="right">The second version to compare</param>
-    /// <returns>True, if left equal to right; otherwise, false.</returns>
+    /// <param name="left">The first semantic version to compare.</param>
+    /// <param name="right">The second semantic version to compare.</param>
+    /// <returns>
+    /// <c>true</c> if <paramref name="left"/> is equal to <paramref name="right"/>; 
+    /// otherwise, <c>false</c>.
+    /// </returns>
     public static bool operator ==(SemanticVersion left, SemanticVersion right)
     {
         if (ReferenceEquals(left, right)) return true;
@@ -152,11 +170,14 @@ public sealed class SemanticVersion : IEquatable<SemanticVersion>, IComparable<S
     }
 
     /// <summary>
-    /// Compare two versions using greater than
+    /// Compares two semantic versions using greater than.
     /// </summary>
-    /// <param name="left">The first version to compare</param>
-    /// <param name="right">The second version to compare</param>
-    /// <returns>True, if left is the greater than right; otherwise, false.</returns>
+    /// <param name="left">The first semantic version to compare.</param>
+    /// <param name="right">The second semantic version to compare.</param>
+    /// <returns>
+    /// <c>true</c> if <paramref name="left"/> is greater than <paramref name="right"/>; 
+    /// otherwise, <c>false</c>.
+    /// </returns>
     public static bool operator >(SemanticVersion left, SemanticVersion right)
     {
         if (right is null) return left != null;
@@ -165,12 +186,14 @@ public sealed class SemanticVersion : IEquatable<SemanticVersion>, IComparable<S
     }
 
     /// <summary>
-    /// Compare two versions using greater or equal than
+    /// Compares two semantic versions using greater than or equal to.
     /// </summary>
-    /// <param name="left">The first version to compare</param>
-    /// <param name="right">The second version to compare</param>
-    /// <returns>True, if left is the greater or equal than right; otherwise, false.</returns>
-    public static bool operator >=(SemanticVersion left, SemanticVersion right) => left == right || left > right;
+    /// <param name="left">The first semantic version to compare.</param>
+    /// <param name="right">The second semantic version to compare.</param>
+    /// <returns>
+    /// <c>true</c> if <paramref name="left"/> is greater than or equal to <paramref name="right"/>; otherwise, <c>false</c>.
+    /// </returns>
+    public static bool operator >=(SemanticVersion left, SemanticVersion right) => !(left < right);
 
     /// <summary>
     /// Parses a version string into a <see cref="SemanticVersion"/> instance.
@@ -187,7 +210,8 @@ public sealed class SemanticVersion : IEquatable<SemanticVersion>, IComparable<S
     /// Parses a version string into a <see cref="SemanticVersion"/> instance.
     /// </summary>
     /// <param name="value">String formatted version</param>
-    /// <param name="provider">An object that supplies culture-specific formatting information</param>
+    /// <param name="provider">An optional format provider. Semantic versions are 
+    /// culture-independent, so this parameter is ignored.</param>
     /// <returns>A <see cref="SemanticVersion"/> instance</returns>
     public static SemanticVersion Parse(string value, IFormatProvider provider)
     {
@@ -199,8 +223,8 @@ public sealed class SemanticVersion : IEquatable<SemanticVersion>, IComparable<S
     /// <summary>
     /// Parses a version string into a <see cref="SemanticVersion"/> instance.
     /// </summary>
-    /// <param name="value">String formatted version</param>
-    /// <returns></returns>
+    /// <param name="value">String formatted semantic version</param>
+    /// <returns>A <see cref="SemanticVersion"/> instance</returns>
     public static SemanticVersion Parse(ReadOnlySpan<char> value)
     {
         return Parse(value, provider: null);
@@ -209,9 +233,9 @@ public sealed class SemanticVersion : IEquatable<SemanticVersion>, IComparable<S
     /// <summary>
     /// Parses a version string into a <see cref="SemanticVersion"/> instance.
     /// </summary>
-    /// <param name="value">String formatted version</param>
-    /// <param name="provider">An optional format provider. Semantic versions are culture-independent, so this parameter is 
-    /// ignored.</param>
+    /// <param name="value">String formatted semantic version</param>
+    /// <param name="provider">An optional format provider. Semantic versions are 
+    /// culture-independent, so this parameter is ignored.</param>
     /// <returns>A <see cref="SemanticVersion"/> instance</returns>
     public static SemanticVersion Parse(ReadOnlySpan<char> value, IFormatProvider provider)
     {
@@ -222,12 +246,14 @@ public sealed class SemanticVersion : IEquatable<SemanticVersion>, IComparable<S
 
         throw new FormatException($"'{value}' is not a valid semantic version.");
     }
+
     /// <summary>
     /// Tries to parse a version string into a <see cref="SemanticVersion"/> instance.
     /// </summary>
-    /// <param name="value">String formatted version</param>
+    /// <param name="value">String formatted semantic version</param>
     /// <param name="result">When this method returns, contains the <see cref="SemanticVersion"/> value equivalent to the version 
-    /// contained in <paramref name="value"/>, if the conversion succeeded, or null if the conversion failed.</param>
+    /// contained in <paramref name="value"/>, if the conversion succeeded, or null if the 
+    /// conversion failed.</param>
     /// <returns>True if the parsing succeeded; otherwise, false.</returns>
     public static bool TryParse(string value, [NotNullWhen(true)] out SemanticVersion result)
     {
@@ -237,11 +263,12 @@ public sealed class SemanticVersion : IEquatable<SemanticVersion>, IComparable<S
     /// <summary>
     /// Tries to parse a version string into a <see cref="SemanticVersion"/> instance.
     /// </summary>
-    /// <param name="value">String formatted version</param>
-    /// <param name="provider">An optional format provider. Semantic versions are culture-independent, so this parameter is 
-    /// ignored.</param>
+    /// <param name="value">String formatted semantic version</param>
+    /// <param name="provider">An optional format provider. Semantic versions are 
+    /// culture-independent, so this parameter is ignored.</param>
     /// <param name="result">When this method returns, contains the <see cref="SemanticVersion"/> value equivalent to the version 
-    /// contained in <paramref name="value"/>, if the conversion succeeded, or null if the conversion failed.</param>
+    /// contained in <paramref name="value"/>, if the conversion succeeded, or null if the 
+    /// conversion failed.</param>
     /// <returns>True if the parsing succeeded; otherwise, false.</returns>
     public static bool TryParse(string value, IFormatProvider provider, [NotNullWhen(true)] out SemanticVersion result)
     {
@@ -257,9 +284,10 @@ public sealed class SemanticVersion : IEquatable<SemanticVersion>, IComparable<S
     /// <summary>
     /// Tries to parse a version string into a <see cref="SemanticVersion"/> instance.
     /// </summary>
-    /// <param name="value">String formatted version</param>
+    /// <param name="value">String formatted semantic version</param>
     /// <param name="result">When this method returns, contains the <see cref="SemanticVersion"/> value equivalent to the version 
-    /// contained in <paramref name="value"/>, if the conversion succeeded, or null if the conversion failed.</param>
+    /// contained in <paramref name="value"/>, if the conversion succeeded, or null if the 
+    /// conversion failed.</param>
     /// <returns>True if the parsing succeeded; otherwise, false.</returns>
     public static bool TryParse(ReadOnlySpan<char> value, [NotNullWhen(true)] out SemanticVersion result)
     {
@@ -269,11 +297,12 @@ public sealed class SemanticVersion : IEquatable<SemanticVersion>, IComparable<S
     /// <summary>
     /// Tries to parse a version string into a <see cref="SemanticVersion"/> instance.  
     /// </summary>
-    /// <param name="value">String formatted version</param>
-    /// <param name="provider">An optional format provider. Semantic versions are culture-independent, so this parameter is 
-    /// ignored.</param>
+    /// <param name="value">String formatted semantic version</param>
+    /// <param name="provider">An optional format provider. Semantic versions are 
+    /// culture-independent, so this parameter is ignored.</param>
     /// <param name="result">When this method returns, contains the <see cref="SemanticVersion"/> value equivalent to the version 
-    /// contained in <paramref name="value"/>, if the conversion succeeded, or null if the conversion failed.</param>
+    /// contained in <paramref name="value"/>, if the conversion succeeded, or null if the 
+    /// conversion failed.</param>
     /// <returns>True if the parsing succeeded; otherwise, false.</returns>
     public static bool TryParse(ReadOnlySpan<char> value, IFormatProvider provider, [NotNullWhen(true)] out SemanticVersion result)
     {
@@ -338,11 +367,15 @@ public sealed class SemanticVersion : IEquatable<SemanticVersion>, IComparable<S
     }
 
     /// <summary>
-    /// Compares the current <see cref="SemanticVersion"/> with another one and returns an integer that indicates whether the 
-    /// current instance precedes, follows, or occurs in the same position in the sort order as the other.
+    /// Compares the precedence of the current semantic version with another semantic version.
+    /// Build metadata is ignored when determining precedence.
     /// </summary>
-    /// <param name="other">The <see cref="SemanticVersion"/> to compare with the current <see cref="SemanticVersion"/>.</param>
-    /// <returns>A value that indicates the relative order of the objects being compared.</returns>
+    /// <param name="other">The semantic version to compare with the current semantic version.</param>
+    /// <returns>
+    /// A value less than zero if this version has lower precedence than <paramref name="other"/>;
+    /// zero if both versions have the same precedence; or a value greater than zero if this
+    /// version has higher precedence than <paramref name="other"/>.
+    /// </returns>
     public int CompareTo(SemanticVersion other)
     {
         if (other is null) return 1;
@@ -364,45 +397,78 @@ public sealed class SemanticVersion : IEquatable<SemanticVersion>, IComparable<S
     }
 
     /// <summary>
-    /// Determines whether the specified <see cref="SemanticVersion"/> is equal to the current <see cref="SemanticVersion"/>.
+    /// Determines whether all components of the specified semantic version, including build 
+    /// metadata, are equal to those of the current semantic version.
     /// </summary>
-    /// <remarks>
-    /// Build metadata does not affect equality because equality follows Semantic Versioning precedence rules.
-    /// </remarks>
-    /// <param name="other">The <see cref="SemanticVersion"/> to compare with the current <see cref="SemanticVersion"/>.</param>
-    /// <returns>True if the specified <see cref="SemanticVersion"/> is equal to the current <see cref="SemanticVersion"/>; 
-    /// otherwise, false.</returns>
+    /// <param name="other">The semantic version to compare with the current semantic version.</param>
+    /// <returns>
+    /// <c>true</c> if <paramref name="other"/> is equal to the current semantic version; 
+    /// otherwise, <c>false</c>.
+    /// </returns>
     public bool Equals(SemanticVersion other)
     {
-        return other is not null && CompareTo(other) == 0;
+        if (other is null)
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        return 
+            Major == other.Major
+            && Minor == other.Minor
+            && Patch == other.Patch
+            && string.Equals(PreRelease, other.PreRelease, StringComparison.Ordinal)
+            && string.Equals(BuildMetadata, other.BuildMetadata, StringComparison.Ordinal);
     }
 
     /// <summary>
-    /// Determines whether the specified object is equal to the current <see cref="SemanticVersion"/>.  
+    /// Determines whether the specified object is equal to the current semantic version.
     /// </summary>
-    /// <remarks>
-    /// Build metadata does not affect equality because equality follows Semantic Versioning precedence rules.
-    /// </remarks>
-    /// <param name="obj">The object to compare with the current <see cref="SemanticVersion"/>.</param>
-    /// <returns>True if the specified object is equal to the current <see cref="SemanticVersion"/>; otherwise, false.</returns>
+    /// <param name="obj">The object to compare with the current semantic version.</param>
+    /// <returns>
+    /// <c>true</c> if <paramref name="obj"/> is equal to the current semantic version; 
+    /// otherwise, <c>false</c>.
+    /// </returns>
     public override bool Equals(object obj)
     {
         return Equals(obj as SemanticVersion);
     }
 
     /// <summary>
-    /// Returns a hash code for the current <see cref="SemanticVersion"/>.
+    /// Returns the hash code for the current semantic version.
     /// </summary>
-    /// <returns>A hash code for the current <see cref="SemanticVersion"/>. </returns>
+    /// <returns>The hash code for the current semantic version.</returns>
     public override int GetHashCode()
     {
-        return HashCode.Combine(Major, Minor, Patch, PreRelease);
+        return HashCode.Combine(Major, Minor, Patch, PreRelease, BuildMetadata);
     }
 
     /// <summary>
-    /// Returns a string that represents the current <see cref="SemanticVersion"/>. 
+    /// Determines whether the specified semantic version has the same precedence as the current
+    /// semantic version.
     /// </summary>
-    /// <returns>A string that represents the current <see cref="SemanticVersion"/>.</returns>
+    /// <remarks>
+    /// Build metadata does not affect precedence because it is not considered when determining 
+    /// version precedence. Two versions that differ only in build metadata have the same precedence.
+    /// </remarks>
+    /// <param name="other">The semantic version to compare with the current semantic version.</param>
+    /// <returns>
+    /// <c>true</c> if <paramref name="other"/> has the same precedence as the current semantic 
+    /// version; otherwise, <c>false</c>.
+    /// </returns>
+    public bool HasSamePrecedence(SemanticVersion other)
+    {
+        return other is not null && CompareTo(other) == 0;
+    }
+
+    /// <summary>
+    /// Returns a string representation of the current semantic version.
+    /// </summary>
+    /// <returns>A string representation of the current semantic version.</returns>
     public override string ToString()
     {
         var version = PreRelease is null
@@ -413,7 +479,126 @@ public sealed class SemanticVersion : IEquatable<SemanticVersion>, IComparable<S
     }
 
     /// <summary>
-    /// Compares two pre-release version identifiers according to the rules defined in https://semver.org.
+    /// Creates a new semantic version with the specified build metadata.
+    /// </summary>
+    /// <param name="buildMetadata">The build metadata to set, or <c>null</c> to remove it.</param>
+    /// <returns>A new semantic version with the specified build metadata.</returns>
+    public SemanticVersion WithBuildMetadata(string buildMetadata)
+    {
+        if (buildMetadata is not null && !IsValidBuildMetadata(buildMetadata.AsSpan()))
+        {
+            throw new ArgumentException("The build metadata value is invalid.", nameof(buildMetadata));
+        }
+
+        if (BuildMetadata != buildMetadata)
+        {
+            return new SemanticVersion(Major, Minor, Patch, PreRelease, buildMetadata);
+        }
+
+        return this;
+    }
+
+    /// <summary>
+    /// Creates a new semantic version with the specified major version.
+    /// </summary>
+    /// <param name="major">The major version to set.</param>
+    /// <returns>A new semantic version with the specified major version.</returns>
+    public SemanticVersion WithMajor(int major)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(major);
+
+        if (Major != major)
+        {
+            return new SemanticVersion(major, Minor, Patch, PreRelease, BuildMetadata);
+        }
+
+        return this;
+    }
+
+    /// <summary>
+    /// Creates a new semantic version with the specified minor version.
+    /// </summary>
+    /// <param name="minor">The minor version to set.</param>
+    /// <returns>A new semantic version with the specified minor version.</returns>
+    public SemanticVersion WithMinor(int minor)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(minor);
+
+        if (Minor != minor)
+        {
+            return new SemanticVersion(Major, minor, Patch, PreRelease, BuildMetadata);
+        }
+
+        return this;
+    }
+
+    /// <summary>
+    /// Creates a new semantic version without build metadata.
+    /// </summary>
+    /// <returns>A new semantic version without build metadata.</returns>
+    public SemanticVersion WithoutBuildMetadata()
+    {
+        if (BuildMetadata is not null)
+        {
+            return new SemanticVersion(Major, Minor, Patch, PreRelease, null);
+        }
+
+        return this;
+    }
+
+    /// <summary>
+    /// Creates a new semantic version without a pre-release version.
+    /// </summary>
+    /// <returns>A new semantic version without a pre-release version.</returns>
+    public SemanticVersion WithoutPreRelease()
+    {
+        if (PreRelease is not null)
+        {
+            return new SemanticVersion(Major, Minor, Patch, null, BuildMetadata);
+        }
+
+        return this;
+    }
+
+    /// <summary>
+    /// Creates a new semantic version with the specified patch version.
+    /// </summary>
+    /// <param name="patch">The patch version to set.</param>
+    /// <returns>A new semantic version with the specified patch version.</returns>
+    public SemanticVersion WithPatch(int patch)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(patch);
+
+        if (Patch != patch)
+        {
+            return new SemanticVersion(Major, Minor, patch, PreRelease, BuildMetadata);
+        }
+
+        return this;
+    }
+
+    /// <summary>
+    /// Creates a new semantic version with the specified pre-release version.
+    /// </summary>
+    /// <param name="preRelease">The pre-release version to set, or <c>null</c> to remove it.</param>
+    /// <returns>A new semantic version with the specified pre-release version.</returns>
+    public SemanticVersion WithPreRelease(string preRelease)
+    {
+        if (preRelease is not null && !IsValidPreRelease(preRelease.AsSpan()))
+        {
+            throw new ArgumentException("The prerelease value is invalid.", nameof(preRelease));
+        }
+
+        if (PreRelease != preRelease)
+        {
+            return new SemanticVersion(Major, Minor, Patch, preRelease, BuildMetadata);
+        }
+
+        return this;
+    }
+
+    /// <summary>
+    /// Compares two pre-release values according to the Semantic Versioning precedence rules.
     /// </summary>
     private static int ComparePreRelease(ReadOnlySpan<char> left, ReadOnlySpan<char> right)
     {
@@ -444,7 +629,8 @@ public sealed class SemanticVersion : IEquatable<SemanticVersion>, IComparable<S
     }
 
     /// <summary>
-    /// Compares two pre-release version identifiers according to the rules defined in https://semver.org.
+    /// Compares two individual pre-release identifiers according to the Semantic Versioning 
+    /// precedence rules.
     /// </summary>
     private static int ComparePreReleaseIdentifier(ReadOnlySpan<char> left, ReadOnlySpan<char> right)
     {
@@ -472,7 +658,8 @@ public sealed class SemanticVersion : IEquatable<SemanticVersion>, IComparable<S
     }
 
     /// <summary>
-    /// Determines whether the specified span of characters represents a numeric value (consists only of ASCII digits).
+    /// Determines whether the specified span of characters represents a numeric value 
+    /// (consists only of ASCII digits).
     /// </summary>
     private static bool IsNumeric(ReadOnlySpan<char> value)
     {
@@ -487,8 +674,8 @@ public sealed class SemanticVersion : IEquatable<SemanticVersion>, IComparable<S
     }
 
     /// <summary>
-    /// Determines whether the specified span of characters is a valid build metadata according to the rules defined 
-    /// in https://semver.org.
+    /// Determines whether the specified span of characters is a valid build metadata according 
+    /// to the rules defined in <see href="https://semver.org">Semantic Versioning 2.0.0</see>.
     /// </summary>
     private static bool IsValidBuildMetadata(ReadOnlySpan<char> value)
     {
@@ -506,8 +693,8 @@ public sealed class SemanticVersion : IEquatable<SemanticVersion>, IComparable<S
     }
 
     /// <summary>
-    /// Determines whether the specified span of characters is a valid identifier according to the rules defined 
-    /// in https://semver.org.
+    /// Determines whether the specified character span is a valid identifier according to
+    /// <see href="https://semver.org">Semantic Versioning 2.0.0</see>.
     /// </summary>
     private static bool IsValidIdentifier(ReadOnlySpan<char> value)
     {
@@ -528,8 +715,8 @@ public sealed class SemanticVersion : IEquatable<SemanticVersion>, IComparable<S
     }
 
     /// <summary>
-    /// Determines whether the specified span of characters is a valid pre-release version according to the rules defined 
-    /// in https://semver.org.
+    /// Determines whether the specified character span is a valid pre-release version according
+    /// to <see href="https://semver.org">Semantic Versioning 2.0.0</see>.
     /// </summary>
     private static bool IsValidPreRelease(ReadOnlySpan<char> value)
     {
@@ -553,7 +740,8 @@ public sealed class SemanticVersion : IEquatable<SemanticVersion>, IComparable<S
     }
 
     /// <summary>
-    /// Tries to parse a numeric component of the version (major, minor, or patch) from the specified span of characters.
+    /// Tries to parse a numeric component of the version (major, minor, or patch) from the 
+    /// specified character span.
     /// </summary>
     private static bool TryParseNumericComponent(ReadOnlySpan<char> value, out int result)
     {

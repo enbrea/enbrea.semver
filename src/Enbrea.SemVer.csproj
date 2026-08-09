@@ -10,7 +10,7 @@
     <Description>A lightweight .NET implementation of Semantic Versioning for parsing, comparing, and formatting version numbers.</Description>
     <RepositoryType>git</RepositoryType>
     <LangVersion>latest</LangVersion>
-    <Version>0.2.0</Version>
+    <Version>0.3.0</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/enbrea/enbrea.semver</RepositoryUrl>
