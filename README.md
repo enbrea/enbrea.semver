@@ -13,7 +13,6 @@ A lightweight .NET implementation of [Semantic Versioning 2.0.0](https://semver.
 * Correct comparison of arbitrarily large numeric prerelease identifiers without numeric overflow
 * Implements `IComparable<T>`, `IEquatable<T>`, `IParsable<T>`, and `ISpanParsable<T>`
 * Parse and evaluate semantic version ranges with inclusive, exclusive, and unbounded endpoints
-* Test whether a version satisfies a range with `SemanticVersionRange.Satisfies`
 * Zero external dependencies
 
 ## Installation
