@@ -4,7 +4,7 @@
  *    
  *    Copyright (c) STÜBER SYSTEMS GmbH
  *
- *    Licensed under the MIT License, Version 2.0. 
+ *    Licensed under the MIT License. 
  * 
  */
 #endregion
@@ -38,8 +38,7 @@ namespace Enbrea.SemVer;
 ///   </item>
 /// </list>
 /// <para>
-/// Square brackets indicate inclusive bounds, while parentheses indicate exclusive or unbounded 
-/// bounds.
+/// Square brackets indicate inclusive bounds, while parentheses indicate exclusive or unbounded bounds.
 /// </para>
 /// </remarks>
 public sealed class SemanticVersionRange : IEquatable<SemanticVersionRange>, ISpanParsable<SemanticVersionRange>

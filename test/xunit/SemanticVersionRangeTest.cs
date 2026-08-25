@@ -1,10 +1,10 @@
 #region Enbrea.SemVer - Copyright (c) STÜBER SYSTEMS GmbH
 /*    
- *    Enbrea.SemVer  
+ *    Enbrea.SemVer 
  *    
  *    Copyright (c) STÜBER SYSTEMS GmbH
  *
- *    Licensed under the MIT License, Version 2.0. 
+ *    Licensed under the MIT License. 
  * 
  */
 #endregion

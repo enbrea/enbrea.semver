@@ -26,7 +26,7 @@ stages:
         pwsh: true
 
 - stage: build
-  displayName: Build Application
+  displayName: Build Packages
   dependsOn: versioning
   variables:
     BuildConfiguration: 'release'
@@ -35,7 +35,7 @@ stages:
     MinorVersion: $[ stageDependencies.versioning.get_version.outputs['gitver.MinorVersion'] ]
     PatchVersion: $[ stageDependencies.versioning.get_version.outputs['gitver.PatchVersion'] ]  
   jobs:  
-  - job: create_setups
+  - job: build_packages
     displayName: Build, Publish and Sign
     variables:
       NUGET_PACKAGES: '$(Pipeline.Workspace)/.nuget/packages'
